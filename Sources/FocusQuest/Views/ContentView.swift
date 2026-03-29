@@ -12,6 +12,8 @@ struct ContentView: View {
                 }
                 .frame(minWidth: 520, idealWidth: 580)
                 .background(Theme.bg)
+            } else if store.isFloating {
+                widgetView
             } else {
                 mainView
             }
@@ -21,6 +23,133 @@ struct ContentView: View {
         }
         .onAppear {
             applyFloating(store.isFloating)
+        }
+    }
+
+    // ── Widget mode (compact floating overlay) ────────────────────
+    private var widgetView: some View {
+        VStack(alignment: .leading, spacing: 10) {
+
+            // Top bar: pin label + exit button
+            HStack(spacing: 0) {
+                HStack(spacing: 5) {
+                    Image(systemName: "pin.fill")
+                        .font(.system(size: 9))
+                    Text("WIDGET MODE")
+                        .font(.system(size: 9, design: .monospaced))
+                        .tracking(1)
+                }
+                .foregroundStyle(Theme.cyan)
+
+                Spacer()
+
+                Button {
+                    store.isFloating = false
+                    store.save()
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.system(size: 9))
+                        Text("EXPAND")
+                            .font(.system(size: 9, design: .monospaced))
+                            .tracking(1)
+                    }
+                    .foregroundStyle(Theme.textFaint)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(Theme.card)
+                    .questBorder(Theme.border, width: 1)
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let active = store.activeTasks.first {
+                // Task title
+                Text(active.title)
+                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                    .foregroundStyle(Theme.text)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                // Progress bar + percentage
+                if active.targetSeconds != nil {
+                    VStack(alignment: .leading, spacing: 4) {
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Rectangle()
+                                    .fill(Theme.card)
+                                    .frame(height: 5)
+                                Rectangle()
+                                    .fill(LinearGradient(
+                                        colors: [Theme.cyan, Theme.green],
+                                        startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: geo.size.width * active.progress, height: 5)
+                            }
+                        }
+                        .frame(height: 5)
+                        .questBorder(Theme.border, width: 1)
+
+                        Text("\(Int(active.progress * 100))% complete")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint)
+                            .tracking(1)
+                    }
+                }
+
+                // Countdown + phase label + pause/play
+                HStack(alignment: .bottom, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(active.formattedPomodoroLeft)
+                            .font(.system(size: 36, design: .monospaced))
+                            .foregroundStyle(active.phase == .focus ? Theme.cyan : Theme.orange)
+
+                        Text(widgetPhaseLabel(for: active))
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint)
+                            .tracking(2)
+                    }
+
+                    Spacer()
+
+                    // Pause / Resume button
+                    Button {
+                        store.togglePause(active.id)
+                    } label: {
+                        Image(systemName: active.pomodoroRunning ? "pause.fill" : "play.fill")
+                            .font(.system(size: 14))
+                            .frame(width: 36, height: 36)
+                            .background(Theme.cyan)
+                            .foregroundStyle(Theme.bg)
+                            .clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.bottom, 2)
+                }
+
+            } else {
+                // No active task
+                VStack(spacing: 6) {
+                    Text("🎮")
+                        .font(.system(size: 22))
+                    Text("NO ACTIVE MISSION")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundStyle(Theme.textFaint)
+                        .tracking(2)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+            }
+        }
+        .padding(16)
+        .frame(minWidth: 260, idealWidth: 300)
+        .background(Color.black.opacity(0.65))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func widgetPhaseLabel(for task: FocusTask) -> String {
+        switch task.phase {
+        case .focus:      return task.pomodoroRunning ? "COUNTDOWN" : "PAUSED"
+        case .shortBreak: return "☕ SHORT BREAK"
+        case .longBreak:  return "🛋 LONG BREAK"
         }
     }
 
@@ -170,13 +299,31 @@ struct ContentView: View {
     // ── Floating window ───────────────────────────────────────────
     private func applyFloating(_ floating: Bool) {
         DispatchQueue.main.async {
-            for window in NSApp.windows {
-                if floating {
-                    window.level = .floating
-                    window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-                } else {
-                    window.level = .normal
-                    window.collectionBehavior = [.managed]
+            guard let window = NSApp.windows.first else { return }
+            if floating {
+                window.level = .floating
+                window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+                window.isMovableByWindowBackground = true
+                window.isOpaque = false
+                window.backgroundColor = .clear
+                // Remove titlebar entirely so no grey bar appears
+                window.styleMask = [.fullSizeContentView, .resizable]
+                window.minSize = NSSize(width: 240, height: 80)
+                window.setContentSize(NSSize(width: 300, height: 200))
+            } else {
+                window.level = .normal
+                window.collectionBehavior = [.managed]
+                window.isMovableByWindowBackground = false
+                window.isOpaque = true
+                window.backgroundColor = NSColor(red: 0.027, green: 0.051, blue: 0.102, alpha: 1)
+                // Restore titlebar (hidden style the app normally uses)
+                window.styleMask = [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView]
+                window.titlebarAppearsTransparent = true
+                window.titleVisibility = .hidden
+                window.minSize = NSSize(width: 520, height: 400)
+                if window.frame.width < 540 {
+                    window.setContentSize(NSSize(width: 560, height: 700))
+                    window.center()
                 }
             }
         }
