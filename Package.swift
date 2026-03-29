@@ -7,7 +7,10 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "FocusQuest",
-            path: "Sources/FocusQuest"
+            path: "Sources/FocusQuest",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

@@ -125,6 +125,36 @@ struct ContentView: View {
                     .padding(.bottom, 2)
                 }
 
+                // Volume slider (only when sound is enabled)
+                if store.settings.soundEnabled {
+                    HStack(spacing: 8) {
+                        Image(systemName: store.settings.volume < 0.01 ? "speaker.slash.fill"
+                                        : store.settings.volume < 0.4  ? "speaker.fill"
+                                        :                                 "speaker.wave.2.fill")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Theme.textFaint)
+                            .frame(width: 16)
+
+                        Slider(
+                            value: Binding(
+                                get: { store.settings.volume },
+                                set: { newVolume in
+                                    store.settings.volume = newVolume
+                                    store.save()
+                                    AudioPlayer.shared.setVolume(Float(newVolume))
+                                }
+                            ),
+                            in: 0...1
+                        )
+                        .tint(Theme.cyan)
+
+                        Text("\(Int(store.settings.volume * 100))%")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint)
+                            .frame(width: 28, alignment: .trailing)
+                    }
+                }
+
             } else {
                 // No active task
                 VStack(spacing: 6) {
@@ -164,6 +194,11 @@ struct ContentView: View {
 
                 // Add quest form
                 AddQuestView(store: store)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 14)
+
+                // Arrange missions by study window
+                ArrangeView(store: store)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 14)
 

@@ -57,6 +57,25 @@ struct SettingsView: View {
                 }
             }
 
+            // Sound
+            section("SOUND") {
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Sound Effects")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Theme.text)
+                        Text("Play audio when a task starts and when a pomodoro finishes.")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint)
+                    }
+                    Spacer()
+                    Toggle("", isOn: $draft.soundEnabled)
+                        .toggleStyle(.switch)
+                        .tint(Theme.cyan)
+                        .labelsHidden()
+                }
+            }
+
             // Preview
             section("SESSION PREVIEW") {
                 ScrollView(.horizontal, showsIndicators: false) {

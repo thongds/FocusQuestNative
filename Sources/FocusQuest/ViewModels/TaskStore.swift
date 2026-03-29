@@ -44,6 +44,8 @@ final class TaskStore {
                 t.pomodoroRunning = false
                 tasks[i] = t
                 changed = true
+                AudioPlayer.shared.stopCountdown()
+                playEffect("finish")
                 continue
             }
 
@@ -56,12 +58,22 @@ final class TaskStore {
                 t.pomodoroLeft   = isLongBreak ? settings.longBreakSeconds : settings.shortBreakSeconds
                 t.phase          = isLongBreak ? .longBreak : .shortBreak
                 t.pomodoroRunning = false   // player starts break manually
+                AudioPlayer.shared.stopCountdown()
+                playEffect("finish")
             }
 
             tasks[i] = t
             changed = true
         }
         if changed { save() }
+    }
+
+    private func playEffect(_ name: String) {
+        guard settings.soundEnabled else { return }
+        DispatchQueue.main.async { [vol = Float(self.settings.volume)] in
+            AudioPlayer.shared.setVolume(vol)
+            AudioPlayer.shared.playEffect(named: name)
+        }
     }
 
     // ── Task actions ─────────────────────────────────────────────
@@ -98,6 +110,7 @@ final class TaskStore {
         task.phase = .focus
         tasks.insert(task, at: 0)
         save()
+        startCountdownSound()
     }
 
     func togglePause(_ id: UUID) {
@@ -108,10 +121,18 @@ final class TaskStore {
             tasks[i].pomodoroLeft = settings.focusSeconds
             tasks[i].phase = .focus
         }
+        if tasks[i].pomodoroRunning && tasks[i].phase == .focus {
+            startCountdownSound()
+        } else {
+            AudioPlayer.shared.stopCountdown()
+        }
         save()
     }
 
     func deleteTask(_ id: UUID) {
+        if tasks.contains(where: { $0.id == id && $0.status == .active }) {
+            AudioPlayer.shared.stopCountdown()
+        }
         tasks.removeAll { $0.id == id }
         save()
     }
@@ -204,5 +225,13 @@ final class TaskStore {
     private func upsertHistory(title: String, targetSeconds: Int?) {
         taskHistory.removeAll { $0.title == title }
         taskHistory.insert(HistoryItem(title: title, targetSeconds: targetSeconds), at: 0)
+    }
+
+    private func startCountdownSound() {
+        guard settings.soundEnabled else { return }
+        DispatchQueue.main.async { [vol = Float(self.settings.volume)] in
+            AudioPlayer.shared.setVolume(vol)
+            AudioPlayer.shared.startCountdown(named: "duration")
+        }
     }
 }

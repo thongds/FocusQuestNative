@@ -5,6 +5,8 @@ struct AppSettings: Codable, Equatable {
     var shortBreak: Int = 5
     var longBreak: Int = 15
     var longBreakInterval: Int = 4
+    var soundEnabled: Bool = true
+    var volume: Double = 0.8
 
     var focusSeconds: Int  { focusMinutes  * 60 }
     var shortBreakSeconds: Int { shortBreak * 60 }

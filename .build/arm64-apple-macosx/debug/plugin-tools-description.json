@@ -3,7 +3,34 @@
 
   ],
   "copyCommands" : {
-
+    "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest_FocusQuest.bundle/duration.mp3" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Resources/duration.mp3"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest_FocusQuest.bundle/duration.mp3"
+        }
+      ]
+    },
+    "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest_FocusQuest.bundle/finish.mp3" : {
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Resources/finish.mp3"
+        }
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest_FocusQuest.bundle/finish.mp3"
+        }
+      ]
+    }
   },
   "explicitTargetDependencyImportCheckingMode" : {
     "none" : {
@@ -22,6 +49,10 @@
       "fileList" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/sources",
       "importPath" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/Modules",
       "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Audio/AudioPlayer.swift"
+        },
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift"
@@ -45,6 +76,10 @@
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/AddQuestView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ArrangeView.swift"
         },
         {
           "kind" : "file",
@@ -72,7 +107,15 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DerivedSources/resource_bundle_accessor.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "virtual",
+          "name" : "<FocusQuest-arm64-apple-macosx26.0-debug.module-resources>"
         },
         {
           "kind" : "file",
@@ -83,18 +126,21 @@
       "moduleName" : "FocusQuest",
       "moduleOutputPath" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/Modules/FocusQuest.swiftmodule",
       "objects" : [
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AudioPlayer.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.swift.o",
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ArrangeView.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView.swift.o",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme.swift.o",
-        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.swift.o"
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.swift.o",
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/resource_bundle_accessor.swift.o"
       ],
       "otherArguments" : [
         "-target",
@@ -109,7 +155,7 @@
         "-j12",
         "-DSWIFT_PACKAGE",
         "-DDEBUG",
-        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
         "-module-cache-path",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/ModuleCache",
         "-parseable-output",
@@ -155,6 +201,10 @@
       "outputs" : [
         {
           "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AudioPlayer.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.swift.o"
         },
         {
@@ -176,6 +226,10 @@
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ArrangeView.swift.o"
         },
         {
           "kind" : "file",
@@ -203,23 +257,30 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/resource_bundle_accessor.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/Modules/FocusQuest.swiftmodule"
         }
       ],
       "prepareForIndexing" : false,
       "sources" : [
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Audio/AudioPlayer.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/AppSettings.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/Task.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/TimeHelpers.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/ViewModels/TaskStore.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/AddQuestView.swift",
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ArrangeView.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ContentView.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/MissionCardView.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/NativeTextField.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/SettingsView.swift",
         "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/Theme.swift",
-        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/WindowKeyFix.swift"
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/WindowKeyFix.swift",
+        "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DerivedSources/resource_bundle_accessor.swift"
       ],
       "tempsPath" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build",
       "wholeModuleOptimization" : false
@@ -236,18 +297,21 @@
       "-package-name",
       "focusquestnative",
       "-c",
+      "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Audio/AudioPlayer.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/AppSettings.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/Task.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/TimeHelpers.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/ViewModels/TaskStore.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/AddQuestView.swift",
+      "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ArrangeView.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ContentView.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/MissionCardView.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/NativeTextField.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/SettingsView.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/Theme.swift",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/WindowKeyFix.swift",
+      "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DerivedSources/resource_bundle_accessor.swift",
       "-I",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/Modules",
       "-target",
@@ -262,7 +326,7 @@
       "-j12",
       "-DSWIFT_PACKAGE",
       "-DDEBUG",
-      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE",
       "-module-cache-path",
       "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/ModuleCache",
       "-parseable-output",
@@ -347,6 +411,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Audio/AudioPlayer.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift"
         },
         {
@@ -371,6 +439,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ArrangeView.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ContentView.swift"
         },
         {
@@ -392,6 +464,10 @@
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/WindowKeyFix.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DerivedSources/resource_bundle_accessor.swift"
         }
       ],
       "outputFilePath" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/sources"
@@ -410,6 +486,14 @@
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ArrangeView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AudioPlayer.swift.o"
         },
         {
           "kind" : "file",
@@ -450,6 +534,10 @@
         {
           "kind" : "file",
           "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/resource_bundle_accessor.swift.o"
         }
       ],
       "outputFilePath" : "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.product/Objects.LinkFileList"
