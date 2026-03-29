@@ -106,6 +106,29 @@ final class TaskStore {
         save()
     }
 
+    func applySettings(_ newSettings: AppSettings) {
+        settings = newSettings
+
+        for i in tasks.indices where tasks[i].status != .completed {
+            switch tasks[i].phase {
+            case .focus:
+                tasks[i].pomodoroLeft = newSettings.focusSeconds
+            case .shortBreak:
+                tasks[i].pomodoroLeft = newSettings.shortBreakSeconds
+            case .longBreak:
+                tasks[i].pomodoroLeft = newSettings.longBreakSeconds
+            }
+        }
+
+        if let active = activeTasks.first, active.pomodoroRunning, newSettings.soundEnabled {
+            startCountdownSound()
+        } else {
+            AudioPlayer.shared.stopCountdown()
+        }
+
+        save()
+    }
+
     func startTask(_ id: UUID) {
         guard let idx = tasks.firstIndex(where: { $0.id == id }) else { return }
         // Revert any previously active task to pending

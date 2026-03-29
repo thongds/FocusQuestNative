@@ -3,7 +3,6 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var store: TaskStore
     @State private var draft: AppSettings
-    @State private var saved = false
 
     init(store: TaskStore) {
         self.store = store
@@ -93,30 +92,12 @@ struct SettingsView: View {
                     }
                 }
             }
-
-            // Save
-            HStack {
-                if saved {
-                    Text("// SETTINGS SAVED")
-                        .font(.system(size: 11, design: .monospaced))
-                        .foregroundStyle(Theme.green)
-                }
-                Spacer()
-                Button("Save Config") {
-                    store.settings = draft
-                    store.save()
-                    saved = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { saved = false }
-                }
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(Theme.bg)
-                .padding(.horizontal, 24).padding(.vertical, 10)
-                .background(Theme.green)
-                .buttonStyle(.plain)
-            }
-            .padding(.top, 8)
         }
         .padding(20)
+        .onChange(of: draft) { _, newValue in
+            guard newValue != store.settings else { return }
+            store.applySettings(newValue)
+        }
     }
 
     // ── Helpers ──────────────────────────────────────────────────
