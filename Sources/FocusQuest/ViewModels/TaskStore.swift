@@ -36,7 +36,9 @@ final class TaskStore {
             var t = tasks[i]
             guard t.status == .active && t.pomodoroRunning else { continue }
 
-            t.elapsed += 1
+            if t.phase == .focus {
+                t.elapsed += 1
+            }
 
             // Auto-complete when target reached
             if let target = t.targetSeconds, t.elapsed >= target {
@@ -52,14 +54,22 @@ final class TaskStore {
             t.pomodoroLeft = max(0, t.pomodoroLeft - 1)
 
             if t.pomodoroLeft == 0 {
-                // Pomodoro round done — switch to break
-                t.roundsCompleted += 1
-                let isLongBreak = t.roundsCompleted % settings.longBreakInterval == 0
-                t.pomodoroLeft   = isLongBreak ? settings.longBreakSeconds : settings.shortBreakSeconds
-                t.phase          = isLongBreak ? .longBreak : .shortBreak
-                t.pomodoroRunning = false   // player starts break manually
-                AudioPlayer.shared.stopCountdown()
-                playEffect("finish")
+                switch t.phase {
+                case .focus:
+                    t.roundsCompleted += 1
+                    let isLongBreak = t.roundsCompleted % settings.longBreakInterval == 0
+                    t.pomodoroLeft = isLongBreak ? settings.longBreakSeconds : settings.shortBreakSeconds
+                    t.phase = isLongBreak ? .longBreak : .shortBreak
+                    t.pomodoroRunning = true
+                    playEffect("finish")
+                    startCountdownSound()
+                case .shortBreak, .longBreak:
+                    t.pomodoroLeft = settings.focusSeconds
+                    t.phase = .focus
+                    t.pomodoroRunning = true
+                    playEffect("finish")
+                    startCountdownSound()
+                }
             }
 
             tasks[i] = t
@@ -116,12 +126,7 @@ final class TaskStore {
     func togglePause(_ id: UUID) {
         guard let i = tasks.firstIndex(where: { $0.id == id }) else { return }
         tasks[i].pomodoroRunning.toggle()
-        // When resuming from a break, reset phase to focus
-        if tasks[i].pomodoroRunning && tasks[i].phase != .focus {
-            tasks[i].pomodoroLeft = settings.focusSeconds
-            tasks[i].phase = .focus
-        }
-        if tasks[i].pomodoroRunning && tasks[i].phase == .focus {
+        if tasks[i].pomodoroRunning {
             startCountdownSound()
         } else {
             AudioPlayer.shared.stopCountdown()

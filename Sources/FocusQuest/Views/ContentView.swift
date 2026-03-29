@@ -147,6 +147,7 @@ struct ContentView: View {
                             in: 0...1
                         )
                         .tint(Theme.cyan)
+                        .controlSize(.mini)
 
                         Text("\(Int(store.settings.volume * 100))%")
                             .font(.system(size: 9, design: .monospaced))
