@@ -1,0 +1,89 @@
+{
+  "": {
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/master.swiftdeps"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/FocusQuestApp.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/AppSettings.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AppSettings.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/Task.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/TimeHelpers.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/ViewModels/TaskStore.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TaskStore.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/AddQuestView.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/AddQuestView.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/ContentView.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/ContentView.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/MissionCardView.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/MissionCardView.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/NativeTextField.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/NativeTextField.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/SettingsView.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/SettingsView.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/Theme.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Theme.dia"
+  },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/WindowKeyFix.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/WindowKeyFix.dia"
+  }
+}
