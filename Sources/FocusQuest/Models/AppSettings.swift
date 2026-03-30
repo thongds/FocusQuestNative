@@ -25,3 +25,22 @@ struct ArrangementPlan: Codable, Equatable {
     var totalFocusSeconds: Int
     var perTaskSeconds: Int
 }
+
+struct TimeRangeInput: Identifiable, Codable, Equatable {
+    var id: UUID
+    var startTime: Date
+    var endTime: Date
+
+    init(id: UUID = UUID(), startTime: Date, endTime: Date) {
+        self.id = id
+        self.startTime = startTime
+        self.endTime = endTime
+    }
+
+    static var defaultStudyWindow: TimeRangeInput {
+        let calendar = Calendar.current
+        let start = calendar.date(bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date()
+        let end = calendar.date(bySettingHour: 20, minute: 0, second: 0, of: Date()) ?? Date()
+        return TimeRangeInput(startTime: start, endTime: end)
+    }
+}

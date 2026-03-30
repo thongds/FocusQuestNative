@@ -11,6 +11,7 @@ final class TaskStore {
     var settings: AppSettings = AppSettings()
     var taskHistory: [HistoryItem] = []
     var arrangement: ArrangementPlan? = nil
+    var studyWindowRanges: [TimeRangeInput] = [.defaultStudyWindow]
     var isFloating: Bool = false         // always-on-top toggle
     var showSettings: Bool = false
 
@@ -198,8 +199,21 @@ final class TaskStore {
     // ── Arrangement ──────────────────────────────────────────────
     func applyArrangement(_ plan: ArrangementPlan) {
         arrangement = plan
-        for i in tasks.indices where tasks[i].status != .completed {
-            tasks[i].targetSeconds = plan.perTaskSeconds
+        let openTaskIndices = tasks.indices.filter { tasks[$0].status != .completed }
+        guard !openTaskIndices.isEmpty else {
+            save()
+            return
+        }
+
+        let baseSeconds = plan.totalFocusSeconds / openTaskIndices.count
+        var remainderSeconds = plan.totalFocusSeconds % openTaskIndices.count
+
+        for index in openTaskIndices {
+            let bonus = remainderSeconds > 0 ? 1 : 0
+            tasks[index].targetSeconds = baseSeconds + bonus
+            if remainderSeconds > 0 {
+                remainderSeconds -= 1
+            }
         }
         save()
     }
@@ -226,6 +240,7 @@ final class TaskStore {
         var settings: AppSettings
         var taskHistory: [HistoryItem]
         var arrangement: ArrangementPlan?
+        var studyWindowRanges: [TimeRangeInput]?
         var isFloating: Bool
     }
 
@@ -233,6 +248,7 @@ final class TaskStore {
         let state = SavedState(
             tasks: tasks, settings: settings,
             taskHistory: taskHistory, arrangement: arrangement,
+            studyWindowRanges: studyWindowRanges,
             isFloating: isFloating
         )
         if let data = try? JSONEncoder().encode(state) {
@@ -247,6 +263,7 @@ final class TaskStore {
         settings    = state.settings
         taskHistory = state.taskHistory
         arrangement = state.arrangement
+        studyWindowRanges = state.studyWindowRanges ?? [.defaultStudyWindow]
         isFloating  = false
     }
 

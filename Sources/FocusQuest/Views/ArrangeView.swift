@@ -3,24 +3,32 @@ import SwiftUI
 struct ArrangeView: View {
     @Bindable var store: TaskStore
 
-    @State private var startTime: Date = Calendar.current.date(
-        bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date()
-    @State private var endTime: Date = Calendar.current.date(
-        bySettingHour: 20, minute: 0, second: 0, of: Date()) ?? Date()
     @State private var lastApplied: String? = nil
 
     // ── Computed ─────────────────────────────────────────────────
-    private var windowMinutes: Int {
-        let minutes = Int(endTime.timeIntervalSince(startTime) / 60)
-        return minutes > 0 ? minutes : minutes + 24 * 60   // handle overnight
+    private var totalWindowMinutes: Int {
+        store.studyWindowRanges.reduce(0) { total, range in
+            total + minutesBetween(range.startTime, range.endTime)
+        }
     }
 
     private var totalFocusSeconds: Int {
-        computeFocusSeconds(windowMinutes: windowMinutes, settings: store.settings)
+        store.studyWindowRanges.reduce(0) { total, range in
+            total + computeFocusSeconds(
+                windowMinutes: minutesBetween(range.startTime, range.endTime),
+                settings: store.settings
+            )
+        }
     }
 
     private var missionCount: Int {
         store.tasks.filter { $0.status != .completed }.count
+    }
+
+    private var allocatedTaskSeconds: Int {
+        store.tasks
+            .filter { $0.status != .completed }
+            .reduce(0) { $0 + ($1.targetSeconds ?? 0) }
     }
 
     private var perTaskSeconds: Int {
@@ -28,8 +36,12 @@ struct ArrangeView: View {
         return totalFocusSeconds / missionCount
     }
 
+    private var budgetRemainingSeconds: Int {
+        totalFocusSeconds - allocatedTaskSeconds
+    }
+
     private var canArrange: Bool {
-        missionCount > 0 && totalFocusSeconds > 0 && windowMinutes > 0
+        missionCount > 0 && totalFocusSeconds > 0 && totalWindowMinutes > 0
     }
 
     // ── Body ─────────────────────────────────────────────────────
@@ -40,10 +52,50 @@ struct ArrangeView: View {
                 .padding(.top, 16)
                 .padding(.bottom, 14)
 
-            // Time pickers
-            HStack(spacing: 12) {
-                timeField(label: "START", time: $startTime)
-                timeField(label: "END",   time: $endTime)
+            // Time ranges
+            VStack(spacing: 10) {
+                ForEach($store.studyWindowRanges) { $range in
+                    HStack(spacing: 12) {
+                        timeField(label: "START", time: $range.startTime)
+                        timeField(label: "END",   time: $range.endTime)
+
+                        if store.studyWindowRanges.count > 1 {
+                            Button {
+                                removeRange(range.id)
+                            } label: {
+                                Image(systemName: "minus")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(Theme.red)
+                                    .frame(width: 28, height: 28)
+                                    .background(Theme.bg)
+                                    .questBorder(Theme.red, width: 1)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                HStack {
+                    Button {
+                        addRange()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 9, weight: .bold))
+                            Text("ADD RANGE")
+                                .font(.system(size: 9, design: .monospaced))
+                                .tracking(1)
+                        }
+                        .foregroundStyle(Theme.cyan)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Theme.bg)
+                        .questBorder(Theme.cyan, width: 1)
+                    }
+                    .buttonStyle(.plain)
+
+                    Spacer()
+                }
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 12)
@@ -83,6 +135,9 @@ struct ArrangeView: View {
         }
         .background(Theme.card)
         .questBorder()
+        .onChange(of: store.studyWindowRanges) { _, _ in
+            store.save()
+        }
     }
 
     // ── Header ────────────────────────────────────────────────────
@@ -150,8 +205,8 @@ struct ArrangeView: View {
     @ViewBuilder
     private var previewRow: some View {
         Group {
-            if windowMinutes <= 0 {
-                Text("End time must be after start time.")
+            if totalWindowMinutes <= 0 {
+                Text("Add at least one non-zero study range.")
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(Theme.red)
             } else if missionCount == 0 {
@@ -159,21 +214,43 @@ struct ArrangeView: View {
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(Theme.textFaint)
             } else {
-                (
-                    Text(TimeHelpers.formatDuration(totalFocusSeconds))
-                        .foregroundStyle(Theme.text)
-                    + Text(" usable focus time")
-                        .foregroundStyle(Theme.textFaint)
-                    + Text("  ·  \(missionCount) mission\(missionCount == 1 ? "" : "s")")
-                        .foregroundStyle(Theme.textFaint)
-                    + Text("  ·  ")
-                        .foregroundStyle(Theme.border)
-                    + Text(TimeHelpers.formatDuration(perTaskSeconds))
-                        .foregroundStyle(Theme.cyan)
-                    + Text(" each")
-                        .foregroundStyle(Theme.textFaint)
-                )
-                .font(.system(size: 12, design: .monospaced))
+                VStack(alignment: .leading, spacing: 6) {
+                    (
+                        Text(TimeHelpers.formatDuration(totalFocusSeconds))
+                            .foregroundStyle(Theme.text)
+                        + Text(" usable focus time")
+                            .foregroundStyle(Theme.textFaint)
+                        + Text("  ·  \(store.studyWindowRanges.count) range\(store.studyWindowRanges.count == 1 ? "" : "s")")
+                            .foregroundStyle(Theme.textFaint)
+                        + Text("  ·  \(missionCount) mission\(missionCount == 1 ? "" : "s")")
+                            .foregroundStyle(Theme.textFaint)
+                        + Text("  ·  ")
+                            .foregroundStyle(Theme.border)
+                        + Text(TimeHelpers.formatDuration(perTaskSeconds))
+                            .foregroundStyle(Theme.cyan)
+                        + Text(" each")
+                            .foregroundStyle(Theme.textFaint)
+                    )
+                    .font(.system(size: 12, design: .monospaced))
+
+                    if budgetRemainingSeconds >= 0 {
+                        (
+                            Text(TimeHelpers.formatDuration(budgetRemainingSeconds))
+                                .foregroundStyle(Theme.green)
+                            + Text(" time budget remaining")
+                                .foregroundStyle(Theme.textFaint)
+                        )
+                        .font(.system(size: 11, design: .monospaced))
+                    } else {
+                        (
+                            Text(TimeHelpers.formatDuration(-budgetRemainingSeconds))
+                                .foregroundStyle(Theme.red)
+                            + Text(" over budget")
+                                .foregroundStyle(Theme.textFaint)
+                        )
+                        .font(.system(size: 11, design: .monospaced))
+                    }
+                }
             }
         }
         .padding(12)
@@ -189,14 +266,18 @@ struct ArrangeView: View {
         let fmt = DateFormatter()
         fmt.dateFormat = "HH:mm"
 
+        let firstRange = store.studyWindowRanges.first ?? .defaultStudyWindow
+        let lastRange = store.studyWindowRanges.last ?? firstRange
+
         let plan = ArrangementPlan(
-            startTime: fmt.string(from: startTime),
-            endTime:   fmt.string(from: endTime),
+            startTime: fmt.string(from: firstRange.startTime),
+            endTime:   fmt.string(from: lastRange.endTime),
             totalFocusSeconds: totalFocusSeconds,
             perTaskSeconds:    perTaskSeconds
         )
         store.applyArrangement(plan)
-        lastApplied = "Updated \(missionCount) mission\(missionCount == 1 ? "" : "s") to \(TimeHelpers.formatDuration(perTaskSeconds)) each from \(TimeHelpers.formatDuration(totalFocusSeconds)) total focus time."
+        lastApplied = "Updated \(missionCount) mission\(missionCount == 1 ? "" : "s") to \(TimeHelpers.formatDuration(perTaskSeconds)) each from \(TimeHelpers.formatDuration(totalFocusSeconds)) total focus time across \(store.studyWindowRanges.count) range\(store.studyWindowRanges.count == 1 ? "" : "s")."
+        store.save()
     }
 
     // ── Pomodoro-aware focus time calculation ─────────────────────
@@ -233,5 +314,24 @@ struct ArrangeView: View {
         }
 
         return totalFocusMin * 60
+    }
+
+    private func minutesBetween(_ start: Date, _ end: Date) -> Int {
+        let minutes = Int(end.timeIntervalSince(start) / 60)
+        return minutes > 0 ? minutes : minutes + 24 * 60
+    }
+
+    private func addRange() {
+        let base = store.studyWindowRanges.last ?? .defaultStudyWindow
+        let calendar = Calendar.current
+        let nextStart = calendar.date(byAdding: .minute, value: 30, to: base.endTime) ?? base.endTime
+        let nextEnd = calendar.date(byAdding: .hour, value: 2, to: nextStart) ?? nextStart
+        store.studyWindowRanges.append(TimeRangeInput(startTime: nextStart, endTime: nextEnd))
+        store.save()
+    }
+
+    private func removeRange(_ id: UUID) {
+        store.studyWindowRanges.removeAll { $0.id == id }
+        store.save()
     }
 }
