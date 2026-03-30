@@ -164,7 +164,9 @@ final class TaskStore {
         guard let i = tasks.firstIndex(where: { $0.id == id }) else { return }
         tasks[i].pomodoroRunning.toggle()
         if tasks[i].pomodoroRunning {
-            isDistracted = false   // clear warning on manual resume
+            isDistracted = false
+            distractionURL = ""
+            AudioPlayer.shared.stopWarning()
             startCountdownSound()
         } else {
             AudioPlayer.shared.stopCountdown()
@@ -176,6 +178,9 @@ final class TaskStore {
     func deleteTask(_ id: UUID) {
         if tasks.contains(where: { $0.id == id && $0.status == .active }) {
             AudioPlayer.shared.stopCountdown()
+            AudioPlayer.shared.stopWarning()
+            isDistracted = false
+            distractionURL = ""
         }
         tasks.removeAll { $0.id == id }
         save()
@@ -210,6 +215,28 @@ final class TaskStore {
         }
         save()
         return nil
+    }
+
+    // ── Subtasks ─────────────────────────────────────────────────
+    func addSubtask(taskId: UUID, title: String) {
+        guard let i = tasks.firstIndex(where: { $0.id == taskId }) else { return }
+        let trimmed = title.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty else { return }
+        tasks[i].subtasks.append(Subtask(title: trimmed))
+        save()
+    }
+
+    func toggleSubtask(taskId: UUID, subtaskId: UUID) {
+        guard let i = tasks.firstIndex(where: { $0.id == taskId }),
+              let j = tasks[i].subtasks.firstIndex(where: { $0.id == subtaskId }) else { return }
+        tasks[i].subtasks[j].isCompleted.toggle()
+        save()
+    }
+
+    func deleteSubtask(taskId: UUID, subtaskId: UUID) {
+        guard let i = tasks.firstIndex(where: { $0.id == taskId }) else { return }
+        tasks[i].subtasks.removeAll { $0.id == subtaskId }
+        save()
     }
 
     // ── Arrangement ──────────────────────────────────────────────
@@ -291,25 +318,34 @@ final class TaskStore {
     // ── Distraction monitor ───────────────────────────────────────
     private func setupDistractionMonitor() {
         distractionMonitor.onDistracted = { [weak self] url in
-            guard let self else { return }
-            // Only intervene during an active focus phase (not breaks)
-            guard let active = self.activeTasks.first,
-                  active.pomodoroRunning,
-                  active.phase == .focus else { return }
-            self.isDistracted = true
-            self.distractionURL = url
-            // Auto-pause the countdown
-            if let i = self.tasks.firstIndex(where: { $0.id == active.id }) {
-                self.tasks[i].pomodoroRunning = false
-                AudioPlayer.shared.stopCountdown()
-                self.save()
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                // Only intervene during an active focus phase (not breaks)
+                guard let active = self.activeTasks.first,
+                      active.pomodoroRunning,
+                      active.phase == .focus else { return }
+                self.isDistracted = true
+                self.distractionURL = url
+                // Auto-pause the countdown and start looping warning
+                if let i = self.tasks.firstIndex(where: { $0.id == active.id }) {
+                    self.tasks[i].pomodoroRunning = false
+                    AudioPlayer.shared.stopCountdown()
+                    if self.settings.soundEnabled {
+                        AudioPlayer.shared.setVolume(Float(self.settings.volume))
+                        AudioPlayer.shared.startWarning(named: "warning")
+                    }
+                    self.save()
+                }
             }
         }
 
         distractionMonitor.onCleared = { [weak self] in
-            guard let self else { return }
-            self.isDistracted = false
-            self.distractionURL = ""
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.isDistracted = false
+                self.distractionURL = ""
+                AudioPlayer.shared.stopWarning()
+            }
         }
 
         refreshDistractionMonitor()

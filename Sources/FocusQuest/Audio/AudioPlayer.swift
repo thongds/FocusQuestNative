@@ -7,6 +7,7 @@ final class AudioPlayer {
     private var volume: Float = 0.8
     private var countdownPlayer: AVAudioPlayer?
     private var effectPlayer: AVAudioPlayer?
+    private var warningPlayer: AVAudioPlayer?
 
     private init() {}
 
@@ -15,6 +16,7 @@ final class AudioPlayer {
         volume = clamped
         countdownPlayer?.volume = clamped
         effectPlayer?.volume = clamped
+        warningPlayer?.volume = clamped
     }
 
     func startCountdown(named name: String) {
@@ -31,6 +33,22 @@ final class AudioPlayer {
     func stopCountdown() {
         countdownPlayer?.stop()
         countdownPlayer = nil
+    }
+
+    func startWarning(named name: String) {
+        guard let player = makePlayer(named: name) else { return }
+        warningPlayer?.stop()
+        warningPlayer = player
+        warningPlayer?.numberOfLoops = -1
+        warningPlayer?.currentTime = 0
+        warningPlayer?.volume = volume
+        warningPlayer?.prepareToPlay()
+        warningPlayer?.play()
+    }
+
+    func stopWarning() {
+        warningPlayer?.stop()
+        warningPlayer = nil
     }
 
     func playEffect(named name: String) {

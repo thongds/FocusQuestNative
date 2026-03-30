@@ -8,6 +8,8 @@ struct MissionCardView: View {
     @State private var isEditingTarget = false
     @State private var targetInput = ""
     @State private var targetError = ""
+    @State private var newSubtaskText = ""
+    @State private var isAddingSubtask = false
 
     private var statusLabel: String {
         switch task.status {
@@ -72,7 +74,14 @@ struct MissionCardView: View {
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Theme.text)
                 .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+                .padding(.bottom, task.subtasks.isEmpty && !isAddingSubtask ? 12 : 8)
+
+            // ── Subtasks ──────────────────────────────────────────
+            if !task.subtasks.isEmpty || isAddingSubtask {
+                subtaskSection
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+            }
 
             // ── Timer row ─────────────────────────────────────────
             VStack(alignment: .leading, spacing: 0) {
@@ -156,6 +165,20 @@ struct MissionCardView: View {
                         .padding(.horizontal, 8).padding(.vertical, 3)
                         .overlay(RoundedRectangle(cornerRadius: 0).stroke(Theme.green, lineWidth: 1))
                 }
+
+                if task.status != .completed {
+                    Button(isAddingSubtask ? "CANCEL" : "+ SUBTASK") {
+                        isAddingSubtask.toggle()
+                        if !isAddingSubtask { newSubtaskText = "" }
+                    }
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundStyle(isAddingSubtask ? Theme.textFaint : Theme.cyan)
+                    .padding(.horizontal, 8).padding(.vertical, 3)
+                    .overlay(RoundedRectangle(cornerRadius: 0).stroke(
+                        isAddingSubtask ? Theme.border.opacity(0.5) : Theme.cyan.opacity(0.6), lineWidth: 1))
+                    .buttonStyle(.plain)
+                }
+
                 Spacer()
                 Button("REMOVE") {
                     store.deleteTask(task.id)
@@ -306,6 +329,79 @@ struct MissionCardView: View {
         case .shortBreak: return "☕ SHORT BREAK"
         case .longBreak:  return "🛋 LONG BREAK"
         }
+    }
+
+    // ── Subtask section ──────────────────────────────────────────
+    @ViewBuilder
+    private var subtaskSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            // Existing subtasks
+            ForEach(task.subtasks) { subtask in
+                HStack(spacing: 8) {
+                    Button {
+                        store.toggleSubtask(taskId: task.id, subtaskId: subtask.id)
+                    } label: {
+                        Image(systemName: subtask.isCompleted ? "checkmark.square.fill" : "square")
+                            .font(.system(size: 13))
+                            .foregroundStyle(subtask.isCompleted ? Theme.green : Theme.textFaint)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text(subtask.title)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(subtask.isCompleted ? Theme.textFaint : Theme.text)
+                        .strikethrough(subtask.isCompleted, color: Theme.textFaint)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Button {
+                        store.deleteSubtask(taskId: task.id, subtaskId: subtask.id)
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 9))
+                            .foregroundStyle(Theme.textFaint.opacity(0.5))
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(Theme.bg)
+                .questBorder(Theme.border.opacity(0.5), width: 1)
+            }
+
+            // Inline add field (shown when isAddingSubtask)
+            if isAddingSubtask {
+                HStack(spacing: 8) {
+                    Image(systemName: "square")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.textFaint.opacity(0.4))
+
+                    TextField("New subtask…", text: $newSubtaskText)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(Theme.text)
+                        .onSubmit { commitSubtask() }
+
+                    Button("ADD") { commitSubtask() }
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundStyle(newSubtaskText.trimmingCharacters(in: .whitespaces).isEmpty ? Theme.textFaint : Theme.bg)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(newSubtaskText.trimmingCharacters(in: .whitespaces).isEmpty ? Theme.card : Theme.cyan)
+                        .questBorder(newSubtaskText.trimmingCharacters(in: .whitespaces).isEmpty ? Theme.border : Theme.cyan, width: 1)
+                        .buttonStyle(.plain)
+                        .disabled(newSubtaskText.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(Theme.bg)
+                .questBorder(Theme.cyan.opacity(0.4), width: 1)
+            }
+        }
+    }
+
+    private func commitSubtask() {
+        store.addSubtask(taskId: task.id, title: newSubtaskText)
+        newSubtaskText = ""
+        // Keep the field open so user can add more subtasks quickly
     }
 
     private func saveTarget() {
