@@ -342,9 +342,17 @@ final class TaskStore {
         distractionMonitor.onCleared = { [weak self] in
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
+                guard self.isDistracted else { return }   // only act if we triggered the pause
                 self.isDistracted = false
                 self.distractionURL = ""
                 AudioPlayer.shared.stopWarning()
+                // Auto-resume the task that was paused by the distraction
+                if let i = self.tasks.firstIndex(where: { $0.status == .active && !$0.pomodoroRunning && $0.phase == .focus }) {
+                    self.tasks[i].pomodoroRunning = true
+                    self.startCountdownSound()
+                    self.save()
+                    self.refreshDistractionMonitor()
+                }
             }
         }
 
