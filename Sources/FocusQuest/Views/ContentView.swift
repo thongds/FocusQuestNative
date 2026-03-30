@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var store = TaskStore()
+    @State private var isWidgetHovered = false
 
     var body: some View {
         Group {
@@ -35,9 +36,10 @@ struct ContentView: View {
                 HStack(spacing: 5) {
                     Image(systemName: "pin.fill")
                         .font(.system(size: 9))
-                    Text("WIDGET MODE")
+                    Text((store.activeTasks.first?.title ?? "WIDGET MODE").uppercased())
                         .font(.system(size: 9, design: .monospaced))
                         .tracking(1)
+                        .lineLimit(1)
                 }
                 .foregroundStyle(Theme.cyan)
 
@@ -54,7 +56,7 @@ struct ContentView: View {
                             .font(.system(size: 9, design: .monospaced))
                             .tracking(1)
                     }
-                    .foregroundStyle(Theme.textFaint)
+                    .foregroundStyle(isWidgetHovered ? Theme.cyan : Theme.textFaint)
                     .padding(.horizontal, 8).padding(.vertical, 4)
                     .background(Theme.card)
                     .questBorder(Theme.border, width: 1)
@@ -63,13 +65,6 @@ struct ContentView: View {
             }
 
             if let active = store.activeTasks.first {
-                // Task title
-                Text(active.title)
-                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                    .foregroundStyle(Theme.text)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-
                 // Progress bar + percentage
                 if active.targetSeconds != nil {
                     VStack(alignment: .leading, spacing: 4) {
@@ -174,6 +169,9 @@ struct ContentView: View {
         .frame(minWidth: 260, idealWidth: 300)
         .background(Color.black.opacity(0.65))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+        .onHover { hovering in
+            isWidgetHovered = hovering
+        }
     }
 
     private func widgetPhaseLabel(for task: FocusTask) -> String {
