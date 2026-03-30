@@ -64,6 +64,33 @@ struct ContentView: View {
                 .buttonStyle(.plain)
             }
 
+            // Distraction warning banner
+            if store.isDistracted {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 11))
+                        Text("DISTRACTION DETECTED")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                    }
+                    .foregroundStyle(Theme.red)
+
+                    Text(store.distractionURL)
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(Theme.red.opacity(0.8))
+                        .lineLimit(1)
+
+                    Text("Timer paused. Close the tab to resume.")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(Theme.textFaint)
+                }
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Theme.red.opacity(0.12))
+                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Theme.red.opacity(0.4), lineWidth: 1))
+            }
+
             if let active = store.activeTasks.first {
                 // Progress bar + percentage
                 if active.targetSeconds != nil {

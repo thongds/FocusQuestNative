@@ -2,6 +2,7 @@
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/FocusQuestApp.swift'
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/AppSettings.swift'
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Models/Task.swift'
+'/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/DistractionMonitor.swift'
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/TimeHelpers.swift'
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/ViewModels/TaskStore.swift'
 '/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Views/AddQuestView.swift'

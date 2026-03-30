@@ -12,15 +12,21 @@ final class TaskStore {
     var taskHistory: [HistoryItem] = []
     var arrangement: ArrangementPlan? = nil
     var studyWindowRanges: [TimeRangeInput] = [.defaultStudyWindow]
-    var isFloating: Bool = false         // always-on-top toggle
+    var isFloating: Bool = false
     var showSettings: Bool = false
 
+    // Distraction monitoring
+    var isDistracted: Bool = false
+    var distractionURL: String = ""
+
     private var timer: Timer?
+    private let distractionMonitor = DistractionMonitor()
 
     // ── Init ─────────────────────────────────────────────────────
     init() {
         load()
         startTimer()
+        setupDistractionMonitor()
     }
 
     // ── Timer ────────────────────────────────────────────────────
@@ -49,6 +55,7 @@ final class TaskStore {
                 changed = true
                 AudioPlayer.shared.stopCountdown()
                 playEffect("finish")
+                refreshDistractionMonitor()
                 continue
             }
 
@@ -62,14 +69,18 @@ final class TaskStore {
                     t.pomodoroLeft = isLongBreak ? settings.longBreakSeconds : settings.shortBreakSeconds
                     t.phase = isLongBreak ? .longBreak : .shortBreak
                     t.pomodoroRunning = true
+                    tasks[i] = t
                     playEffect("finish")
                     startCountdownSound()
+                    refreshDistractionMonitor()
                 case .shortBreak, .longBreak:
                     t.pomodoroLeft = settings.focusSeconds
                     t.phase = .focus
                     t.pomodoroRunning = true
+                    tasks[i] = t
                     playEffect("finish")
                     startCountdownSound()
+                    refreshDistractionMonitor()
                 }
             }
 
@@ -128,6 +139,7 @@ final class TaskStore {
         }
 
         save()
+        refreshDistractionMonitor()
     }
 
     func startTask(_ id: UUID) {
@@ -145,17 +157,20 @@ final class TaskStore {
         tasks.insert(task, at: 0)
         save()
         startCountdownSound()
+        refreshDistractionMonitor()
     }
 
     func togglePause(_ id: UUID) {
         guard let i = tasks.firstIndex(where: { $0.id == id }) else { return }
         tasks[i].pomodoroRunning.toggle()
         if tasks[i].pomodoroRunning {
+            isDistracted = false   // clear warning on manual resume
             startCountdownSound()
         } else {
             AudioPlayer.shared.stopCountdown()
         }
         save()
+        refreshDistractionMonitor()
     }
 
     func deleteTask(_ id: UUID) {
@@ -164,6 +179,7 @@ final class TaskStore {
         }
         tasks.removeAll { $0.id == id }
         save()
+        refreshDistractionMonitor()
     }
 
     func moveTask(from source: IndexSet, to destination: Int) {
@@ -270,6 +286,46 @@ final class TaskStore {
     private func upsertHistory(title: String, targetSeconds: Int?) {
         taskHistory.removeAll { $0.title == title }
         taskHistory.insert(HistoryItem(title: title, targetSeconds: targetSeconds), at: 0)
+    }
+
+    // ── Distraction monitor ───────────────────────────────────────
+    private func setupDistractionMonitor() {
+        distractionMonitor.onDistracted = { [weak self] url in
+            guard let self else { return }
+            // Only intervene during an active focus phase (not breaks)
+            guard let active = self.activeTasks.first,
+                  active.pomodoroRunning,
+                  active.phase == .focus else { return }
+            self.isDistracted = true
+            self.distractionURL = url
+            // Auto-pause the countdown
+            if let i = self.tasks.firstIndex(where: { $0.id == active.id }) {
+                self.tasks[i].pomodoroRunning = false
+                AudioPlayer.shared.stopCountdown()
+                self.save()
+            }
+        }
+
+        distractionMonitor.onCleared = { [weak self] in
+            guard let self else { return }
+            self.isDistracted = false
+            self.distractionURL = ""
+        }
+
+        refreshDistractionMonitor()
+    }
+
+    /// Call whenever blockedURLs changes or a task starts/stops.
+    func refreshDistractionMonitor() {
+        let urls = settings.blockedURLs.filter { !$0.isEmpty }
+        let hasActiveRunningFocusTask = activeTasks.contains { $0.phase == .focus && $0.pomodoroRunning }
+        if urls.isEmpty || !hasActiveRunningFocusTask || !DistractionMonitor.hasPermission {
+            distractionMonitor.stop()
+            isDistracted = false
+            distractionURL = ""
+        } else {
+            distractionMonitor.start(blockedURLs: urls)
+        }
     }
 
     private func startCountdownSound() {

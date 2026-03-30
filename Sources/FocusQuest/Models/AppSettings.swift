@@ -7,6 +7,7 @@ struct AppSettings: Codable, Equatable {
     var longBreakInterval: Int = 4
     var soundEnabled: Bool = true
     var volume: Double = 0.8
+    var blockedURLs: [String] = []
 
     var focusSeconds: Int  { focusMinutes  * 60 }
     var shortBreakSeconds: Int { shortBreak * 60 }

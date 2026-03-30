@@ -3,6 +3,8 @@ import SwiftUI
 struct SettingsView: View {
     @Bindable var store: TaskStore
     @State private var draft: AppSettings
+    @State private var newBlockedURL: String = ""
+    @State private var accessibilityGranted: Bool = DistractionMonitor.hasPermission
 
     init(store: TaskStore) {
         self.store = store
@@ -72,6 +74,97 @@ struct SettingsView: View {
                         .toggleStyle(.switch)
                         .tint(Theme.cyan)
                         .labelsHidden()
+                }
+            }
+
+            // Blocked Sites
+            section("BLOCKED SITES") {
+                VStack(alignment: .leading, spacing: 10) {
+
+                    // Permission row
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(accessibilityGranted ? Theme.green : Theme.red)
+                            .frame(width: 7, height: 7)
+                        Text(accessibilityGranted ? "Accessibility permission granted" : "Accessibility permission required")
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundStyle(accessibilityGranted ? Theme.green : Theme.textFaint)
+                        Spacer()
+                        if !accessibilityGranted {
+                            Button("GRANT ACCESS") {
+                                DistractionMonitor.requestPermission()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    accessibilityGranted = DistractionMonitor.hasPermission
+                                    store.refreshDistractionMonitor()
+                                }
+                            }
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(Theme.cyan)
+                            .padding(.horizontal, 8).padding(.vertical, 4)
+                            .questBorder(Theme.cyan, width: 1)
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.bottom, 2)
+
+                    Text("During a focus session, opening these sites will auto-pause your timer and show a warning in widget mode.")
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundStyle(Theme.textFaint)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    // Add URL row
+                    HStack(spacing: 8) {
+                        TextField("e.g. facebook.com", text: $newBlockedURL)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundStyle(Theme.text)
+                            .padding(8)
+                            .background(Theme.bg)
+                            .questBorder(Theme.border, width: 1)
+                            .onSubmit { addBlockedURL() }
+
+                        Button("ADD") { addBlockedURL() }
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundStyle(newBlockedURL.isEmpty ? Theme.textFaint : Theme.bg)
+                            .padding(.horizontal, 12).padding(.vertical, 8)
+                            .background(newBlockedURL.isEmpty ? Theme.card : Theme.cyan)
+                            .questBorder(newBlockedURL.isEmpty ? Theme.border : Theme.cyan, width: 1)
+                            .buttonStyle(.plain)
+                            .disabled(newBlockedURL.isEmpty)
+                    }
+
+                    // Blocked URL list
+                    if draft.blockedURLs.isEmpty {
+                        Text("No blocked sites yet.")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint.opacity(0.5))
+                            .padding(.top, 2)
+                    } else {
+                        VStack(spacing: 6) {
+                            ForEach(draft.blockedURLs, id: \.self) { url in
+                                HStack {
+                                    Image(systemName: "xmark.shield.fill")
+                                        .font(.system(size: 10))
+                                        .foregroundStyle(Theme.red)
+                                    Text(url)
+                                        .font(.system(size: 11, design: .monospaced))
+                                        .foregroundStyle(Theme.textDim)
+                                    Spacer()
+                                    Button {
+                                        draft.blockedURLs.removeAll { $0 == url }
+                                    } label: {
+                                        Image(systemName: "trash")
+                                            .font(.system(size: 10))
+                                            .foregroundStyle(Theme.textFaint)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                                .padding(.horizontal, 10).padding(.vertical, 7)
+                                .background(Theme.bg)
+                                .questBorder(Theme.border, width: 1)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -186,7 +279,21 @@ struct SettingsView: View {
             .questBorder(color, width: 1)
     }
 
-    @ViewBuilder
+    private func addBlockedURL() {
+        var trimmed = newBlockedURL.trimmingCharacters(in: .whitespaces).lowercased()
+        for prefix in ["https://", "http://", "www."] {
+            if trimmed.hasPrefix(prefix) { trimmed = String(trimmed.dropFirst(prefix.count)) }
+        }
+        // Strip trailing slashes and whitespace
+        trimmed = trimmed.trimmingCharacters(in: CharacterSet(charactersIn: "/").union(.whitespaces))
+        guard !trimmed.isEmpty, !draft.blockedURLs.contains(trimmed) else {
+            newBlockedURL = ""
+            return
+        }
+        draft.blockedURLs.append(trimmed)
+        newBlockedURL = ""
+    }
+
     private func badgeView(_ label: String, color: Color) -> some View {
         Text(label)
             .font(.system(size: 10, design: .monospaced))

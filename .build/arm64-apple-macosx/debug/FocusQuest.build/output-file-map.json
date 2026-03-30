@@ -30,6 +30,13 @@
     "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.swiftdeps",
     "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/Task.dia"
   },
+  "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/DistractionMonitor.swift": {
+    "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DistractionMonitor.d",
+    "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DistractionMonitor.swift.o",
+    "swiftmodule": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DistractionMonitor~partial.swiftmodule",
+    "swift-dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DistractionMonitor.swiftdeps",
+    "diagnostics": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/DistractionMonitor.dia"
+  },
   "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/Sources/FocusQuest/Utils/TimeHelpers.swift": {
     "dependencies": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.d",
     "object": "/Users/thong/Documents/Claude/Projects/todo app/FocusQuestNative/.build/arm64-apple-macosx/debug/FocusQuest.build/TimeHelpers.swift.o",
