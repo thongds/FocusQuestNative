@@ -15,6 +15,10 @@ final class TaskStore {
     var isFloating: Bool = false
     var showSettings: Bool = false
 
+    // Today's focus tracking
+    var todayFocusSeconds: Int = 0
+    private var todayDate: String = TaskStore.calendarDay()
+
     // Distraction monitoring
     var isDistracted: Bool = false
     var distractionURL: String = ""
@@ -38,6 +42,13 @@ final class TaskStore {
     }
 
     private func tick() {
+        // Midnight reset
+        let today = TaskStore.calendarDay()
+        if today != todayDate {
+            todayDate = today
+            todayFocusSeconds = 0
+        }
+
         var changed = false
         for i in tasks.indices {
             var t = tasks[i]
@@ -45,6 +56,7 @@ final class TaskStore {
 
             if t.phase == .focus {
                 t.elapsed += 1
+                todayFocusSeconds += 1
             }
 
             // Auto-complete when target reached
@@ -285,6 +297,8 @@ final class TaskStore {
         var arrangement: ArrangementPlan?
         var studyWindowRanges: [TimeRangeInput]?
         var isFloating: Bool
+        var todayFocusSeconds: Int?
+        var todayDate: String?
     }
 
     func save() {
@@ -292,7 +306,9 @@ final class TaskStore {
             tasks: tasks, settings: settings,
             taskHistory: taskHistory, arrangement: arrangement,
             studyWindowRanges: studyWindowRanges,
-            isFloating: isFloating
+            isFloating: isFloating,
+            todayFocusSeconds: todayFocusSeconds,
+            todayDate: todayDate
         )
         if let data = try? JSONEncoder().encode(state) {
             UserDefaults.standard.set(data, forKey: saveKey)
@@ -308,6 +324,18 @@ final class TaskStore {
         arrangement = state.arrangement
         studyWindowRanges = state.studyWindowRanges ?? [.defaultStudyWindow]
         isFloating  = false
+        // Restore today's counter only if it was saved for the same calendar day
+        let savedDate = state.todayDate ?? ""
+        if savedDate == TaskStore.calendarDay() {
+            todayFocusSeconds = state.todayFocusSeconds ?? 0
+            todayDate = savedDate
+        }
+    }
+
+    private static func calendarDay() -> String {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        return fmt.string(from: Date())
     }
 
     private func upsertHistory(title: String, targetSeconds: Int?) {

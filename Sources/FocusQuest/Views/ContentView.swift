@@ -218,6 +218,11 @@ struct ContentView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 12)
 
+                // Daily summary
+                DailySummaryView(store: store)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 14)
+
                 // Add quest form
                 AddQuestView(store: store)
                     .padding(.horizontal, 20)

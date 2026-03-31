@@ -4,6 +4,7 @@ struct ArrangeView: View {
     @Bindable var store: TaskStore
 
     @State private var lastApplied: String? = nil
+    @State private var isExpanded: Bool = true
 
     // ── Computed ─────────────────────────────────────────────────
     private var totalWindowMinutes: Int {
@@ -47,94 +48,107 @@ struct ArrangeView: View {
     // ── Body ─────────────────────────────────────────────────────
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            header
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 14)
+            // Clickable header (always visible)
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { isExpanded.toggle() }
+            } label: {
+                header
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, isExpanded ? 14 : 16)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
 
-            // Time ranges
-            VStack(spacing: 10) {
-                ForEach($store.studyWindowRanges) { $range in
-                    HStack(spacing: 12) {
-                        timeField(label: "START", time: $range.startTime)
-                        timeField(label: "END",   time: $range.endTime)
+            if isExpanded {
+                // Time ranges
+                VStack(spacing: 10) {
+                    ForEach($store.studyWindowRanges) { $range in
+                        HStack(spacing: 12) {
+                            timeField(label: "START", time: $range.startTime)
+                            timeField(label: "END",   time: $range.endTime)
 
-                        if store.studyWindowRanges.count > 1 {
-                            Button {
-                                removeRange(range.id)
-                            } label: {
-                                Image(systemName: "minus")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundStyle(Theme.red)
-                                    .frame(width: 28, height: 28)
-                                    .background(Theme.bg)
-                                    .questBorder(Theme.red, width: 1)
+                            if store.studyWindowRanges.count > 1 {
+                                Button {
+                                    removeRange(range.id)
+                                } label: {
+                                    Image(systemName: "minus")
+                                        .font(.system(size: 10, weight: .bold))
+                                        .foregroundStyle(Theme.red)
+                                        .frame(width: 28, height: 28)
+                                        .background(Theme.bg)
+                                        .questBorder(Theme.red, width: 1)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
+                    }
+
+                    HStack {
+                        Button {
+                            addRange()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 9, weight: .bold))
+                                Text("ADD RANGE")
+                                    .font(.system(size: 9, design: .monospaced))
+                                    .tracking(1)
+                            }
+                            .foregroundStyle(Theme.cyan)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(Theme.bg)
+                            .questBorder(Theme.cyan, width: 1)
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .transition(.opacity.combined(with: .move(edge: .top)))
 
-                HStack {
-                    Button {
-                        addRange()
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 9, weight: .bold))
-                            Text("ADD RANGE")
-                                .font(.system(size: 9, design: .monospaced))
-                                .tracking(1)
-                        }
-                        .foregroundStyle(Theme.cyan)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Theme.bg)
-                        .questBorder(Theme.cyan, width: 1)
+                // Preview row
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("PREVIEW")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundStyle(Theme.textFaint)
+                        .tracking(2)
+
+                    previewRow
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+
+                // Footer
+                HStack(spacing: 10) {
+                    if let msg = lastApplied {
+                        Text(msg)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Theme.green)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .buttonStyle(.plain)
-
                     Spacer()
+                    Button("Arrange Targets") { applyArrangement() }
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(canArrange ? Theme.bg : Theme.textFaint)
+                        .padding(.horizontal, 18).padding(.vertical, 8)
+                        .background(canArrange ? Theme.cyan : Theme.card)
+                        .questBorder(canArrange ? Theme.cyan : Theme.border, width: 1)
+                        .buttonStyle(.plain)
+                        .disabled(!canArrange)
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 14)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
-
-            // Preview row
-            VStack(alignment: .leading, spacing: 6) {
-                Text("PREVIEW")
-                    .font(.system(size: 9, design: .monospaced))
-                    .foregroundStyle(Theme.textFaint)
-                    .tracking(2)
-
-                previewRow
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
-
-            // Footer
-            HStack(spacing: 10) {
-                if let msg = lastApplied {
-                    Text(msg)
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundStyle(Theme.green)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                Spacer()
-                Button("Arrange Targets") { applyArrangement() }
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(canArrange ? Theme.bg : Theme.textFaint)
-                    .padding(.horizontal, 18).padding(.vertical, 8)
-                    .background(canArrange ? Theme.cyan : Theme.card)
-                    .questBorder(canArrange ? Theme.cyan : Theme.border, width: 1)
-                    .buttonStyle(.plain)
-                    .disabled(!canArrange)
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
         }
         .background(Theme.card)
         .questBorder()
+        .clipped()
         .onChange(of: store.studyWindowRanges) { _, _ in
             store.save()
         }
@@ -169,16 +183,23 @@ struct ArrangeView: View {
                     .questBorder(Theme.red, width: 1)
                     .buttonStyle(.plain)
                 }
+
+                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(Theme.textFaint)
+                    .frame(width: 24, height: 24)
             }
 
             Text("Equalize Targets By Study Window")
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(Theme.text)
 
-            Text("Set your learning range and the app will split the usable Pomodoro focus time equally across your current missions.")
-                .font(.system(.caption, design: .monospaced))
-                .foregroundStyle(Theme.textFaint)
-                .fixedSize(horizontal: false, vertical: true)
+            if isExpanded {
+                Text("Set your learning range and the app will split the usable Pomodoro focus time equally across your current missions.")
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(Theme.textFaint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 

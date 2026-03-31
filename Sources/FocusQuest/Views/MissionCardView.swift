@@ -6,7 +6,8 @@ struct MissionCardView: View {
     let index: Int
 
     @State private var isEditingTarget = false
-    @State private var targetInput = ""
+    @State private var targetHours: Int = 1
+    @State private var targetMinutes: Int = 0
     @State private var targetError = ""
     @State private var newSubtaskText = ""
     @State private var isAddingSubtask = false
@@ -108,8 +109,10 @@ struct MissionCardView: View {
 
                             if task.status != .completed {
                                 Button("EDIT TARGET") {
-                                    targetInput = task.targetSeconds.map { TimeHelpers.secondsToHoursString($0) } ?? ""
-                                    targetError = ""
+                                    let secs = task.targetSeconds ?? 3600
+                                    targetHours   = secs / 3600
+                                    targetMinutes = (secs % 3600) / 60
+                                    targetError   = ""
                                     isEditingTarget.toggle()
                                 }
                                 .font(.system(size: 9, design: .monospaced))
@@ -241,40 +244,64 @@ struct MissionCardView: View {
 
     @ViewBuilder
     private var editTargetRow: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 8) {
-                TextField("Hours e.g. 1.5", text: $targetInput)
-                    .textFieldStyle(.plain)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundStyle(Theme.text)
-                    .frame(width: 120)
-                    .padding(6)
-                    .background(Theme.bg)
-                    .overlay(RoundedRectangle(cornerRadius: 0)
-                        .stroke(targetError.isEmpty ? Theme.border : Theme.red, lineWidth: 1))
-                    .onSubmit { saveTarget() }
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 10) {
+                // Hours field
+                durationField(label: "HOURS", value: $targetHours, range: 0...23)
 
+                // Minutes field
+                durationField(label: "MINUTES", value: $targetMinutes, range: 0...55, step: 5)
+
+                // Max cap hint
                 if let max = maxAllowedSeconds {
-                    Text("max \(TimeHelpers.formatDuration(max))")
-                        .font(.system(size: 9, design: .monospaced))
-                        .foregroundStyle(Theme.textFaint)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("MAX ALLOWED")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(Theme.textFaint)
+                            .tracking(2)
+                        Text(TimeHelpers.formatDuration(max))
+                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(Theme.orange)
+                    }
+                    .padding(10)
+                    .background(Theme.bg)
+                    .questBorder(Theme.border, width: 1)
                 }
 
-                Button("SAVE")  { saveTarget() }
-                    .font(.system(size: 9, design: .monospaced))
-                    .foregroundStyle(Theme.green)
-                    .padding(.horizontal, 8).padding(.vertical, 4)
-                    .overlay(RoundedRectangle(cornerRadius: 0).stroke(Theme.green, lineWidth: 1))
+                Spacer()
+
+                // SAVE
+                Button("SAVE") { saveTarget() }
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Theme.bg)
+                    .padding(.horizontal, 12).padding(.vertical, 7)
+                    .background(Theme.green)
+                    .questBorder(Theme.green, width: 1)
                     .buttonStyle(.plain)
 
+                // FIT — fill remaining budget into this task
+                if let max = maxAllowedSeconds {
+                    Button("FIT") {
+                        targetHours   = max / 3600
+                        targetMinutes = (max % 3600) / 60
+                        targetError   = ""
+                    }
+                    .font(.system(size: 9, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Theme.orange)
+                    .padding(.horizontal, 10).padding(.vertical, 7)
+                    .questBorder(Theme.orange.opacity(0.6), width: 1)
+                    .buttonStyle(.plain)
+                }
+
+                // CANCEL
                 Button("CANCEL") {
                     isEditingTarget = false
                     targetError = ""
                 }
                 .font(.system(size: 9, design: .monospaced))
                 .foregroundStyle(Theme.textDim)
-                .padding(.horizontal, 8).padding(.vertical, 4)
-                .overlay(RoundedRectangle(cornerRadius: 0).stroke(Theme.border, lineWidth: 1))
+                .padding(.horizontal, 10).padding(.vertical, 7)
+                .questBorder(Theme.border, width: 1)
                 .buttonStyle(.plain)
             }
 
@@ -285,6 +312,72 @@ struct MissionCardView: View {
             }
         }
         .padding(.top, 6)
+    }
+
+    private func durationField(label: String, value: Binding<Int>,
+                                range: ClosedRange<Int>, step: Int = 1) -> some View {
+        // Total seconds currently selected across both fields
+        let selectedSeconds = targetHours * 3600 + targetMinutes * 60
+        let atMax = maxAllowedSeconds.map { selectedSeconds >= $0 } ?? false
+        let canIncrement = !atMax && value.wrappedValue < range.upperBound
+
+        return VStack(alignment: .leading, spacing: 4) {
+            Text(label)
+                .font(.system(size: 9, design: .monospaced))
+                .foregroundStyle(Theme.textFaint)
+                .tracking(2)
+
+            HStack(spacing: 0) {
+                // Minus
+                Button {
+                    let next = value.wrappedValue - step
+                    value.wrappedValue = max(range.lowerBound, next)
+                    targetError = ""
+                } label: {
+                    Text("−")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(value.wrappedValue > range.lowerBound ? Theme.textDim : Theme.textFaint.opacity(0.3))
+                        .frame(width: 28, height: 28)
+                        .background(Theme.card)
+                }
+                .buttonStyle(.plain)
+                .disabled(value.wrappedValue <= range.lowerBound)
+
+                // Value
+                Text(String(format: "%02d", value.wrappedValue))
+                    .font(.system(size: 18, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Theme.text)
+                    .frame(width: 36)
+                    .multilineTextAlignment(.center)
+
+                // Plus
+                Button {
+                    let next = value.wrappedValue + step
+                    value.wrappedValue = min(range.upperBound, next)
+                    // Clamp total to max if it now exceeds it
+                    if let max = maxAllowedSeconds {
+                        let total = targetHours * 3600 + targetMinutes * 60
+                        if total > max {
+                            let clamped = max
+                            targetHours   = clamped / 3600
+                            targetMinutes = (clamped % 3600) / 60
+                        }
+                    }
+                    targetError = ""
+                } label: {
+                    Text("+")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(canIncrement ? Theme.textDim : Theme.textFaint.opacity(0.3))
+                        .frame(width: 28, height: 28)
+                        .background(Theme.card)
+                }
+                .buttonStyle(.plain)
+                .disabled(!canIncrement)
+            }
+        }
+        .padding(10)
+        .background(Theme.bg)
+        .questBorder(targetError.isEmpty ? Theme.border : Theme.red, width: 1)
     }
 
     private var progressBar: some View {
@@ -405,19 +498,14 @@ struct MissionCardView: View {
     }
 
     private func saveTarget() {
-        let trimmed = targetInput.trimmingCharacters(in: .whitespaces)
-        if trimmed.isEmpty {
-            if let err = store.updateTarget(id: task.id, seconds: nil) {
-                targetError = err; return
-            }
-            isEditingTarget = false; return
+        let seconds = targetHours * 3600 + targetMinutes * 60
+        guard seconds > 0 else {
+            targetError = "Target must be greater than 0"
+            return
         }
-        guard let hours = Double(trimmed), hours > 0, hours <= 24 else {
-            targetError = "Enter a number like 1 or 1.5"; return
-        }
-        let seconds = TimeHelpers.hoursToSeconds(hours)
         if let err = store.updateTarget(id: task.id, seconds: seconds) {
-            targetError = err; return
+            targetError = err
+            return
         }
         isEditingTarget = false
         targetError = ""
