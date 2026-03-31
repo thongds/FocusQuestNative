@@ -270,21 +270,13 @@ struct MissionCardView: View {
 
                 Spacer()
 
-                // SAVE
-                Button("SAVE") { saveTarget() }
-                    .font(.system(size: 9, weight: .bold, design: .monospaced))
-                    .foregroundStyle(Theme.bg)
-                    .padding(.horizontal, 12).padding(.vertical, 7)
-                    .background(Theme.green)
-                    .questBorder(Theme.green, width: 1)
-                    .buttonStyle(.plain)
-
                 // FIT — fill remaining budget into this task
                 if let max = maxAllowedSeconds {
                     Button("FIT") {
                         targetHours   = max / 3600
                         targetMinutes = (max % 3600) / 60
                         targetError   = ""
+                        autoSave()
                     }
                     .font(.system(size: 9, weight: .bold, design: .monospaced))
                     .foregroundStyle(Theme.orange)
@@ -293,8 +285,8 @@ struct MissionCardView: View {
                     .buttonStyle(.plain)
                 }
 
-                // CANCEL
-                Button("CANCEL") {
+                // DONE
+                Button("DONE") {
                     isEditingTarget = false
                     targetError = ""
                 }
@@ -312,6 +304,8 @@ struct MissionCardView: View {
             }
         }
         .padding(.top, 6)
+        .onChange(of: targetHours)   { _, _ in autoSave() }
+        .onChange(of: targetMinutes) { _, _ in autoSave() }
     }
 
     private func durationField(label: String, value: Binding<Int>,
@@ -497,7 +491,7 @@ struct MissionCardView: View {
         // Keep the field open so user can add more subtasks quickly
     }
 
-    private func saveTarget() {
+    private func autoSave() {
         let seconds = targetHours * 3600 + targetMinutes * 60
         guard seconds > 0 else {
             targetError = "Target must be greater than 0"
@@ -507,7 +501,6 @@ struct MissionCardView: View {
             targetError = err
             return
         }
-        isEditingTarget = false
         targetError = ""
     }
 }
